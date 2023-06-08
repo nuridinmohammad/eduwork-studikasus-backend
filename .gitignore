@@ -1,0 +1,4 @@
+node_modules/
+.env 
+restapi.rest
+yarn-error.log
