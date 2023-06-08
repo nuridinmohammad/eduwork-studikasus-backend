@@ -6,10 +6,6 @@ const invoicesController = {
   show: async (req, res, next) => {
     try {
       const policy = policyFor(req.user);
-      const subjectInvoice = subject("Invoice", {
-        ...invoice,
-        user_id: invoice.user._id,
-      });
       if (!policy.can("read", subjectInvoice)) {
         return res.json({
           errorNumber: 1,
@@ -20,6 +16,11 @@ const invoicesController = {
       const invoice = await Invoice.findOne({ order: order_id })
         .populate("order")
         .populate("user");
+      const subjectInvoice = subject("Invoice", {
+        ...invoice,
+        user_id: invoice.user._id,
+      });
+
       return res.json(invoice);
     } catch (error) {
       if (error && error.name === "ValidationError") {
