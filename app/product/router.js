@@ -9,19 +9,19 @@ const router = express();
 
 router.get("/products", productController.index);
 router.post(
-  "/product",
+  "/products",
   multer({ dest: os.tmpdir() }).single("image"),
   policy_check("create", "Product"),
   productController.store
 );
 router.put(
-  "/product/:id",
+  "/products/:id",
   multer({ dest: os.tmpdir() }).single("image"),
   policy_check("update", "Product"),
   productController.update
 );
 router.delete(
-  "/product/:id",
+  "/products/:id",
   policy_check("delete", "Product"),
   productController.destroy
 );

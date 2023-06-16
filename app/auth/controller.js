@@ -22,10 +22,10 @@ const authController = {
       };
       const user = await User(result);
       await user.save();
-      return res.json(user);
+      return res.status(201).json(user);
     } catch (error) {
       if (error && error.name === "ValidationError") {
-        return res.json({
+        return res.status(400).json({
           errorNumber: 1,
           message: error.message,
           fields: error.errors,
@@ -54,7 +54,7 @@ const authController = {
     passport.authenticate("local", async function (error, user) {
       if (error) return next(error);
       if (!user)
-        return res.json({
+        return res.status(401).json({
           errorNumber: 1,
           message: "Email or Password incorrect",
         });
@@ -63,7 +63,7 @@ const authController = {
       const signIn = await User.findByIdAndUpdate(user._id, {
         $push: { token: signed },
       });
-      res.json({
+      res.status(200).json({
         message: "Login Success!",
         user,
         token: signed,
@@ -71,29 +71,26 @@ const authController = {
       return signIn;
     })(req, res, next);
   },
-  logout: async(req, res, next) => {
+  logout: async (req, res, next) => {
     const token = getToken(req);
-    console.log(token);
-    const user =  await User.findOneAndUpdate(
+    const user = await User.findOneAndUpdate(
       { token: { $in: [token] } },
       { $pull: { token: token } },
       { useFindAndModify: false }
     );
-    console.log(user);
     if (!token || !user) {
-      return res.json({ errorNumber: 1, message: "No user Found!" });
+      return res.status(401).json({ errorNumber: 1, message: "No user Found!" });
     }
-    return res.json({ errorNumber: 0, message: "Logout Berhasil" });
+    return res.status(200).json({ errorNumber: 0, message: "Logout Berhasil" });
   },
   me: async (req, res, next) => {
-    console.log(req.user);
     if (!req.user) {
-      res.json({
+      res.status(401).json({
         errorNumber: 1,
         message: "Anda sedang tidak login atau token expired",
       });
     }
-    res.json({ response: "Sedang Login", data: req.user });
+    res.status(200).json({ response: "Sedang Login", data: req.user });
   },
 };
 

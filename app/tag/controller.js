@@ -4,16 +4,15 @@ const tagController = {
   index: async (req, res, next) => {
     try {
       const tag = await Tag.find();
-      return res.json(tag);
+      return res.status(200).json(tag);
     } catch (error) {
       if (error && error.name === "ValidationError") {
-        return res.json({
+        return res.status(400).json({
           errorNumber: 1,
           message: error.message,
           fields: error.errors,
         });
       }
-
       next(error);
     }
   },
@@ -22,10 +21,10 @@ const tagController = {
       const payload = req.body;
       const tag = await Tag(payload);
       await tag.save();
-      return res.json(tag);
+      return res.status(201).json(tag);
     } catch (error) {
       if (error && error.name === "ValidationError") {
-        return res.json({
+        return res.status(400).json({
           errorNumber: 1,
           message: error.message,
           fields: error.errors,
@@ -44,10 +43,10 @@ const tagController = {
         runValidators: true,
       });
       await tag.save();
-      return res.json(tag);
+      return res.status(201).json(tag);
     } catch (error) {
       if (error && error.name === "ValidationError") {
-        return res.json({
+        return res.status(400).json({
           errorNumber: 1,
           message: error.message,
           fields: error.errors,
@@ -61,13 +60,13 @@ const tagController = {
     try {
       const { id } = req.params;
       const tag = await Tag.findByIdAndDelete(id);
-      return res.json({
+      return res.status(200).json({
         response: "Success Deleted Tag",
         message: "Success Deleted Tag By Id" + tag._id,
       });
     } catch (error) {
       if (error && error.name === "ValidationError") {
-        return res.json({
+        return res.status(400).json({
           errorNumber: 1,
           message: error.message,
           fields: error.errors,

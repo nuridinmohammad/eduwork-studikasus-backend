@@ -14,13 +14,13 @@ const orderController = {
         .limit(parseInt(limit))
         .populate("order_items")
         .sort("-createdAt");
-      return res.json({
+      return res.status(200).json({
         data: orders.map((order) => order.toJSON({ virtuals: true })),
         count,
       });
     } catch (error) {
       if (error && error.name === "ValidationError") {
-        return res.json({
+        return res.status(400).json({
           errorNumber: 1,
           message: error.message,
           fields: error.errors,
@@ -37,7 +37,7 @@ const orderController = {
         "product"
       );
       if (!items) {
-        return res.json({
+        return res.status(400).json({
           errorNumber: 1,
           message:
             "You are not create order because you have not items in cart",
@@ -69,10 +69,10 @@ const orderController = {
       orderItems.forEach((item) => order.order_items.push(item));
       order.save();
       await CartItem.deleteMany({ user: req.user._id });
-      return res.json(order);
+      return res.status(201).json(order);
     } catch (error) {
       if (error && error.name === "ValidationError") {
-        return res.json({
+        return res.status(400).json({
           errorNumber: 1,
           message: error.message,
           fields: error.errors,

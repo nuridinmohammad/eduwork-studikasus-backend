@@ -54,11 +54,11 @@ const productController = {
           try {
             let product = new Product({ ...payload, image_url: filename });
             await product.save();
-            return res.json(product);
+            return res.status(201).json(product);
           } catch (error) {
             fs.unlinkSync(target_path);
             if (err && err.name === "ValidationError") {
-              return res.json({
+              return res.status(400).json({
                 errorNumber: 1,
                 message: error.message,
                 fields: error.errors,
@@ -74,11 +74,11 @@ const productController = {
       } else {
         let product = new Product(payload);
         await product.save();
-        return res.json(product);
+        return res.status(201).json(product);
       }
     } catch (error) {
       if (error && error.name === "ValidationError") {
-        return res.json({
+        return res.status(400).json({
           errorNumber: 1,
           message: error.message,
           fields: error.errors,
@@ -144,11 +144,11 @@ const productController = {
               runValidators: true,
             });
             await product.save();
-            return res.json(product);
+            return res.status(201).json(product);
           } catch (error) {
             fs.unlinkSync(target_path);
             if (err && err.name === "ValidationError") {
-              return res.json({
+              return res.status(400).json({
                 errorNumber: 1,
                 message: error.message,
                 fields: error.errors,
@@ -167,11 +167,11 @@ const productController = {
           runValidators: true,
         });
         await product.save();
-        return res.json(product);
+        return res.status(201).json(product);
       }
     } catch (error) {
       if (error && error.name === "ValidationError") {
-        return res.json({
+        return res.status(400).json({
           errorNumber: 1,
           message: error.message,
           fields: error.errors,
@@ -225,11 +225,18 @@ const productController = {
         .limit(parseInt(limit))
         .populate("tags")
         .populate("category");
-      return res.json({
+      return res.status(200).json({
         data: product,
         totalNet: count,
       });
     } catch (error) {
+      if (error && error.name === "ValidationError") {
+        return res.status(400).json({
+          errorNumber: 1,
+          message: error.message,
+          fields: error.errors,
+        });
+      }
       next(error);
     }
   },
@@ -242,11 +249,18 @@ const productController = {
       if (fs.existsSync(currentImage)) {
         fs.unlinkSync(currentImage);
       }
-      return res.json({
+      return res.status(200).json({
         response: "success delete",
         productId: productById._id,
       });
     } catch (error) {
+      if (error && error.name === "ValidationError") {
+        return res.status(400).json({
+          errorNumber: 1,
+          message: error.message,
+          fields: error.errors,
+        });
+      }
       next(error);
     }
   },

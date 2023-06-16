@@ -13,10 +13,10 @@ const deliveryAddressController = {
         .skip(parseInt(skip))
         .limit(parseInt(limit))
         .sort("-createdAt");
-      return res.json({ data: address, count });
+      return res.status(200).json({ data: address, count });
     } catch (error) {
       if (error && error.name === "ValidationError") {
-        return res.json({
+        return res.status(400).json({
           errorNumber: 1,
           message: error.message,
           fields: error.errors,
@@ -36,16 +36,16 @@ const deliveryAddressController = {
         user_id: address.user,
       });
       if (!policy.can("delete", subjectAddress)) {
-        return res.json({
+        return res.status(403).json({
           errorNumber: 1,
           message: "You are not allowed to modify this resource",
         });
       }
       address = await DeliveryAddress.findByIdAndDelete(id);
-      res.json({ response: "Success deletet address ", data: address });
+      res.status(200).json({ response: "Success deletet address ", data: address });
     } catch (error) {
       if (error && error.name === "ValidationError") {
-        return res.json({
+        return res.status(400).json({
           errorNumber: 1,
           message: error.message,
           fields: error.errors,
@@ -61,10 +61,10 @@ const deliveryAddressController = {
       const user = req.user;
       const address = await DeliveryAddress({ ...payload, user: user._id });
       await address.save();
-      return res.json(address);
+      return res.status(201).json(address);
     } catch (error) {
       if (error && error.name === "ValidationError") {
-        return res.json({
+        return res.status(400).json({
           errorNumber: 1,
           message: error.message,
           fields: error.errors,
@@ -85,7 +85,7 @@ const deliveryAddressController = {
         user_id: address.user,
       });
       if (!policy.can("update", subjectAddress)) {
-        return res.json({
+        return res.status(403).json({
           errorNumber: 1,
           message: `You are not allowed to modify this resource`,
         });
@@ -93,10 +93,10 @@ const deliveryAddressController = {
       address = await DeliveryAddress.findByIdAndUpdate(id, payload, {
         new: true,
       });
-      return res.json(address);
+      return res.status(201).json(address);
     } catch (error) {
       if (error && error.name === "ValidationError") {
-        return res.json({
+        return res.status(400).json({
           errorNumber: 1,
           message: error.message,
           fields: error.errors,

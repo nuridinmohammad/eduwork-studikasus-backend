@@ -7,10 +7,10 @@ const CartController = {
       const items = await CartItem.find({ user: req.user._id }).populate(
         "product"
       );
-      return res.json(items);
+      return res.status(200).json(items);
     } catch (error) {
       if (error && error.name === "ValidationError") {
-        return res.json({
+        return res.status(401).json({
           errorNumber: 1,
           message: error.message,
           field: error.errors,
@@ -52,10 +52,10 @@ const CartController = {
           };
         })
       );
-      return res.json(cartItems);
+      return res.status(201).json(cartItems);
     } catch (error) {
       if (error && error.name === "ValidationError") {
-        return res.json({
+        return res.status(401).json({
           errorNumber: 1,
           message: error.message,
           field: error.errors,

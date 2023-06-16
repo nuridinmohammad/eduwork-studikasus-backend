@@ -7,7 +7,7 @@ const invoicesController = {
     try {
       const policy = policyFor(req.user);
       if (!policy.can("read", subjectInvoice)) {
-        return res.json({
+        return res.status(403).json({
           errorNumber: 1,
           message: "Anda tidak memiliki akses untuk melihat invoice ini",
         });
@@ -24,7 +24,7 @@ const invoicesController = {
       return res.json(invoice);
     } catch (error) {
       if (error && error.name === "ValidationError") {
-        return res.json({
+        return res.status(400).json({
           errorNumber: 1,
           response: "Error when getting invoices",
           message: error.message,
