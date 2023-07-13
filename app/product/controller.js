@@ -185,10 +185,11 @@ const productController = {
     try {
       const {
         skip = 0,
-        limit = 10,
+        limit = 4,
         q = "",
         category = "",
         tags = [],
+        page = 1,
       } = req.query;
       let criteria = {};
 
@@ -219,15 +220,20 @@ const productController = {
           };
         }
       }
-      const count = await Product.find().countDocuments();
+      const totalData = await Product.find(criteria).count();
+      const totalPages = Math.ceil(Number(totalData) / Number(limit || 5));
       const product = await Product.find(criteria)
         .skip(parseInt(skip))
         .limit(parseInt(limit))
         .populate("tags")
         .populate("category");
       return res.status(200).json({
+        pagination: {
+          page: Number(page),
+          totalData,
+          totalPages,
+        },
         data: product,
-        totalNet: count,
       });
     } catch (error) {
       if (error && error.name === "ValidationError") {

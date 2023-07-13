@@ -53,11 +53,12 @@ const authController = {
   login: async (req, res, next) => {
     passport.authenticate("local", async function (error, user) {
       if (error) return next(error);
-      if (!user)
+      if (!user) {
         return res.status(401).json({
           errorNumber: 1,
           message: "Email or Password incorrect",
         });
+      }
 
       const signed = jsonwebtoken.sign(user, config.secretkey);
       const signIn = await User.findByIdAndUpdate(user._id, {
@@ -79,7 +80,9 @@ const authController = {
       { useFindAndModify: false }
     );
     if (!token || !user) {
-      return res.status(401).json({ errorNumber: 1, message: "No user Found!" });
+      return res
+        .status(401)
+        .json({ errorNumber: 1, message: "No user Found!" });
     }
     return res.status(200).json({ errorNumber: 0, message: "Logout Berhasil" });
   },

@@ -62,6 +62,7 @@ const orderController = {
           ...item,
           name: item.product.name,
           qty: parseInt(item.qty),
+          price: parseInt(item.price),
           order: order._id,
           product: item.product._id,
         }))
